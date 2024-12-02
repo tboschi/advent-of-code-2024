@@ -15,19 +15,22 @@ def compare_levels(cmp: int, ref: bool) -> bool:
 def is_report_safe(report: list[int]) -> bool:
     cur, *report = report
     ref = None
-    skip1 = False
     for lev in report:
         cmp = lev - cur
         if ref is None:
             ref = cmp > 0
         if not compare_levels(cmp, ref):
-            if skip1:
-                return False
-            skip1 = True
-            print(f"skip {cur}, {lev}")
-            continue
+            return False
         cur = lev
     return True
+
+def is_report_safe_dampened(report: list[int]) -> bool:
+    if is_report_safe(report):
+        return True
+    for index in range(len(report)):
+        if is_report_safe(report[:index] + report[index+1:]):
+            return True
+    return False
 
 def solve(problem: list[str]) -> int:
     tot = 0
@@ -35,9 +38,7 @@ def solve(problem: list[str]) -> int:
         report = [int(l) for l in line.split()]
         if not report:
             continue
-        ok = is_report_safe(report)
-        print(report, ok)
-        tot += ok
+        tot += is_report_safe_dampened(report)
 
     return tot
 

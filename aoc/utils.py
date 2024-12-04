@@ -13,25 +13,23 @@ def get_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def read(path: PathType) -> list[str]:
+def read_from_file(path: PathType) -> list[str]:
     """Read a file into a list of lines"""
-    data = []
     with open(path) as file:
-        for line in file:
-            data.append(line.strip())
-    return data
+        data = file.read()
+    return read_from_string(data)
 
 
-def read_test(test: str) -> list[str]:
+def read_from_string(test: str) -> list[str]:
     """Split a test string into a list of lines"""
-    return test.splitlines()
+    return [clean_line for line in test.splitlines() if (clean_line := line.strip())]
 
 
 def solve_day_part(day: int, part: int):
     solver = importlib.import_module(f"day{day:02}.part{part}")
     assert solver.__file__ is not None
     problem_file = Path(solver.__file__).parent / "input"
-    problem = read(problem_file)
+    problem = read_from_file(problem_file)
     print(f"Day {day} / part {part} -- solution is {solver.solve(problem)}")
 
 

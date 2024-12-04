@@ -1,9 +1,5 @@
-def read(path: str) -> list[str]:
-    data = []
-    with open(path) as file:
-        for line in file:
-            data.append(line.strip())
-    return data
+""" Day 2 - part 1 """
+
 
 def compare_levels(cmp: int, ref: bool) -> bool:
     if cmp == 0:
@@ -11,6 +7,7 @@ def compare_levels(cmp: int, ref: bool) -> bool:
     if abs(cmp) > 3:
         return False
     return (cmp > 0) == ref
+
 
 def is_report_safe(report: list[int]) -> bool:
     cur, *report = report
@@ -24,18 +21,26 @@ def is_report_safe(report: list[int]) -> bool:
         cur = lev
     return True
 
+
 def solve(problem: list[str]) -> int:
     tot = 0
     for line in problem:
         report = [int(l) for l in line.split()]
-        if not report:
-            continue
         tot += is_report_safe(report)
 
     return tot
 
 
 if __name__ == "__main__":
-    import sys
-    problem = read(sys.argv[1])
-    print(solve(problem))
+    from aoc.utils import read_from_string
+
+    example = """
+7 6 4 2 1
+1 2 7 8 9
+9 7 6 2 1
+1 3 2 4 5
+8 6 4 4 1
+1 3 6 7 9
+"""
+    problem = read_from_string(example)
+    print(f"Example solution {solve(problem)}")

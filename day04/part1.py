@@ -1,4 +1,6 @@
-from collections.abc import Iterator
+""" Day 4 - part 1 """
+
+from aoc.structures import Matrix
 
 
 def read(path: str) -> list[str]:
@@ -9,27 +11,7 @@ def read(path: str) -> list[str]:
     return data
 
 
-class Matrix:
-    def __init__(self, problem: list[str], default: str = ""):
-        self.rows = len(problem)
-        self.cols = len(problem[0])
-        self.data = "".join(problem)
-        self.default = default
-
-    def __getitem__(self, rc: tuple[int, int]) -> str:
-        r, c = rc
-        if r < 0 or r >= self.rows:
-            return self.default
-        if c < 0 or c >= self.cols:
-            return self.default
-        return self.data[r * self.cols + c]
-
-    def __iter__(self) -> Iterator[tuple[tuple[int, int], str]]:
-        for rc, item in enumerate(self.data):
-            yield divmod(rc, self.cols), item
-
-
-def search_dir(data: Matrix, rc: tuple[int], direction: tuple[int, int]) -> bool:
+def search_dir(data: Matrix, rc: tuple[int, int], direction: tuple[int, int]) -> bool:
     r, c = rc
     dr, dc = direction
     for check in "MAS":
@@ -40,7 +22,7 @@ def search_dir(data: Matrix, rc: tuple[int], direction: tuple[int, int]) -> bool
     return True
 
 
-def search(data: Matrix, rc: tuple[int]) -> int:
+def search(data: Matrix, rc: tuple[int, int]) -> int:
     if data[rc] != "X":
         return 0
 
@@ -69,7 +51,19 @@ def solve(problem: list[str]) -> int:
 
 
 if __name__ == "__main__":
-    import sys
+    from aoc.utils import read_from_string
 
-    problem = read(sys.argv[1])
-    print(solve(problem))
+    example = """
+MMMSXXMASM
+MSAMXMSMSA
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX
+"""
+    problem = read_from_string(example)
+    print(f"Example solution {solve(problem)}")

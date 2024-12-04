@@ -1,21 +1,15 @@
-import re
+from aoc.utils import read_test
 
-def read(path: str) -> list[str]:
-    data = []
-    with open(path) as file:
-        for line in file:
-            data.append(line.strip())
-    return data
 
 def solve(problem: list[str]) -> int:
-    list1: list[str] = []
-    list2: list[str] = []
+    list1: list[int] = []
+    list2: list[int] = []
     for line in problem:
-        match = re.match("(\d+)\s+(\d+)", line)
-        if match is None:
+        if not line:
             continue
-        list1.append(int(match[1]))
-        list2.append(int(match[2]))
+        l1, l2 = line.split()
+        list1.append(int(l1))
+        list2.append(int(l2))
 
     list1.sort()
     list2.sort()
@@ -24,6 +18,13 @@ def solve(problem: list[str]) -> int:
 
 
 if __name__ == "__main__":
-    import sys
-    problem = read(sys.argv[1])
-    print(solve(problem))
+    example = """
+3   4
+4   3
+2   5
+1   3
+3   9
+3   3
+"""
+    problem = read_test(example)
+    print(f"Example solution {solve(problem)}")

@@ -4,7 +4,7 @@ from collections.abc import Iterator
 
 
 class Matrix:
-    """Easy access to 2D data"""
+    """Easy access to 2D string data"""
 
     def __init__(self, problem: list[str], default: str = ""):
         self.rows = len(problem)
@@ -23,3 +23,23 @@ class Matrix:
     def __iter__(self) -> Iterator[tuple[tuple[int, int], str]]:
         for rc, item in enumerate(self.data):
             yield divmod(rc, self.cols), item
+
+
+class LabelTree:
+    """Basic tree mapping integer nodes to each other"""
+
+    def __init__(self) -> None:
+        self.table: dict[int, set[int]] = {}
+
+    def add(self, before: int, after: int) -> None:
+        self.table.setdefault(before, set()).add(after)
+
+    def __getitem__(self, key: int) -> set[int]:
+        return self.table.get(key, set())
+
+    def compare(self, page1: int, page2: int) -> int:
+        if page1 in self[page2]:
+            return 1
+        if page2 in self[page1]:
+            return -1
+        return 0

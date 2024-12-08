@@ -12,6 +12,7 @@ def generate_part(day: int, part: int) -> str:
         doc
         + """
 
+
 def solve(problem: list[str]) -> int:
     return 0
 
@@ -31,9 +32,6 @@ def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="AOC 2024")
     parser.add_argument("day", type=int, help="the day to solve")
     parser.add_argument("--part", type=int, help="solve just the specified part")
-    parser.add_argument(
-        "--make", action="store_true", help="create a day folder from the template"
-    )
     return parser
 
 
@@ -49,8 +47,8 @@ def read_from_string(test: str) -> list[str]:
     return [clean_line for line in test.splitlines() if (clean_line := line.strip())]
 
 
-def parse_list(data: str) -> list[int]:
-    return [int(d) for d in data.split(",")]
+def parse_list(data: str, sep: str | None = ",") -> list[int]:
+    return [int(d) for d in data.split(sep)]
 
 
 def solve_day_part(day: int, part: int):
@@ -62,6 +60,10 @@ def solve_day_part(day: int, part: int):
 
 
 def solve_day(day: int, part: int | None = None):
+    if not Path(f"day{day:02}").is_dir():
+        create_day(day)
+        return
+
     if part is None:
         solve_day_part(day, 1)
         solve_day_part(day, 2)

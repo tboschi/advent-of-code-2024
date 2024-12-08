@@ -42,7 +42,7 @@ def search(data: Matrix, rc: tuple[int, int]) -> int:
 
 
 def solve(problem: list[str]) -> int:
-    data = Matrix(problem)
+    data = Matrix([list(p) for p in problem])
     tot = 0
     for rc, item in data:
         tot += search(data, rc)

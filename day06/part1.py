@@ -25,7 +25,7 @@ def retreat(pos: tuple[int, int], move: tuple[int, int]) -> tuple[int, int]:
 
 
 def solve(problem: list[str]) -> int:
-    area = Matrix([list(p) for p in problem])
+    area = Matrix([list(p) for p in problem], "")
     positions = set()
     for pos, cur in area:
         if cur in ("<", "^", ">", "v"):

@@ -27,7 +27,7 @@ def retreat(pos: tuple[int, int], move: tuple[int, int]) -> tuple[int, int]:
 
 
 def possible_positions(
-    area: Matrix, pos: tuple[int, int], cur: str
+    area: Matrix[str], pos: tuple[int, int], cur: str
 ) -> set[tuple[int, int]]:
     positions: set[tuple[int, int]] = set()
     delta = DIRECTIONS[cur]
@@ -45,7 +45,7 @@ def possible_positions(
     return positions
 
 
-def detect_loop(area: Matrix, pos: tuple[int, int], cur: str) -> bool:
+def detect_loop(area: Matrix[str], pos: tuple[int, int], cur: str) -> bool:
     positions: set[tuple[str, int, int]] = set()
     delta = DIRECTIONS[cur]
     while tile := area[pos]:
@@ -66,7 +66,7 @@ def detect_loop(area: Matrix, pos: tuple[int, int], cur: str) -> bool:
 
 
 def solve(problem: list[str]) -> int:
-    area = Matrix([list(p) for p in problem])
+    area = Matrix([list(p) for p in problem], "")
     positions: set[tuple[int, int]] = set()
     for p0, c0 in area:
         if c0 in DIRECTIONS:

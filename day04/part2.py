@@ -11,7 +11,7 @@ def read(path: str) -> list[str]:
     return data
 
 
-def search_mas(data: Matrix, rc: tuple[int, int], direction: bool) -> bool:
+def search_mas(data: Matrix[str], rc: tuple[int, int], direction: bool) -> bool:
     r, c = rc
     if direction:
         corners = data[r - 1, c - 1], data[r + 1, c + 1]
@@ -20,7 +20,7 @@ def search_mas(data: Matrix, rc: tuple[int, int], direction: bool) -> bool:
     return corners == ("M", "S") or corners == ("S", "M")
 
 
-def search(data: Matrix, rc: tuple[int, int]) -> bool:
+def search(data: Matrix[str], rc: tuple[int, int]) -> bool:
     if data[rc] != "A":
         return False
 
@@ -28,7 +28,7 @@ def search(data: Matrix, rc: tuple[int, int]) -> bool:
 
 
 def solve(problem: list[str]) -> int:
-    data = Matrix([list(p) for p in problem])
+    data = Matrix([list(p) for p in problem], "")
     tot = 0
     for rc, item in data:
         tot += search(data, rc)

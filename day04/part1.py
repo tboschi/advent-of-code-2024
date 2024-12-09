@@ -11,7 +11,7 @@ def read(path: str) -> list[str]:
     return data
 
 
-def search_dir(data: Matrix, rc: tuple[int, int], direction: tuple[int, int]) -> bool:
+def search_dir(data: Matrix[str], rc: tuple[int, int], direction: tuple[int, int]) -> bool:
     r, c = rc
     dr, dc = direction
     for check in "MAS":
@@ -22,7 +22,7 @@ def search_dir(data: Matrix, rc: tuple[int, int], direction: tuple[int, int]) ->
     return True
 
 
-def search(data: Matrix, rc: tuple[int, int]) -> int:
+def search(data: Matrix[str], rc: tuple[int, int]) -> int:
     if data[rc] != "X":
         return 0
 
@@ -42,7 +42,7 @@ def search(data: Matrix, rc: tuple[int, int]) -> int:
 
 
 def solve(problem: list[str]) -> int:
-    data = Matrix([list(p) for p in problem])
+    data = Matrix([list(p) for p in problem], "")
     tot = 0
     for rc, item in data:
         tot += search(data, rc)

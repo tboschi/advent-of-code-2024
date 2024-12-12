@@ -1,7 +1,7 @@
 """ Day 9 - part 1 """
 
 
-def get_file_free_map(disk_map: str) -> tuple[int, list[int, int], list[int, int]]:
+def get_file_free_map(disk_map: str) -> tuple[int, list[int], list[int]]:
     file_map = [int(c) for c in disk_map[::2]]
     free_map = [int(c) for c in disk_map[1::2]]
     return len(file_map), file_map, free_map

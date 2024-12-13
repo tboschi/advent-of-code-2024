@@ -54,3 +54,27 @@ class LabelTree:
         if page2 in self[page1]:
             return -1
         return 0
+
+
+class UnionFind(Generic[T]):
+    def __init__(self, data: list[T] = []):
+        self.root: dict[T, T] = {d: d for d in data}
+
+    def __contains__(self, item: T) -> bool:
+        return item in self.root
+
+    def find(self, item: T) -> T:
+        if item not in self:
+            raise KeyError
+
+        if self.root[item] == item:
+            return item
+        return self.find(self.root[item])
+
+    def union(self, item1: T, item2: T) -> None:
+        if item1 not in self.root:
+            self.root[item1] = item1
+        if item2 not in self.root:
+            self.root[item2] = item2
+
+        self.root[self.find(item1)] = self.find(item2)

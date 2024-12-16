@@ -1,7 +1,7 @@
 """ Day 14 - part 1 """
 
-import re
 import math
+import re
 
 INFO = re.compile(r"p=(\d+),(\d+) v=(-?\d+),(-?\d+)")
 
@@ -10,6 +10,7 @@ Pair = tuple[int, int]
 
 def extract_info(robot: str) -> tuple[Pair, Pair]:
     m = INFO.match(robot)
+    assert m is not None
     return (int(m.group(1)), int(m.group(2))), (int(m.group(3)), int(m.group(4)))
 
 
@@ -28,7 +29,6 @@ def count_robots(robots: list[Pair], shape: Pair) -> int:
             continue
         counts[(x > w, y > h)] += 1
 
-    print(counts)
     return math.prod(counts.values())
 
 

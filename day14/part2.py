@@ -1,25 +1,27 @@
 """ Day 14 - part 2 """
 
-import re
 import math
 import os
+import re
 import time
+from typing import TypeVar, Type
+
 from aoc.structures import Matrix
 
-Pair = tuple[int, int]
-
+R = TypeVar("R", bound="Robot")
 
 class Robot:
     INFO = re.compile(r"p=(\d+),(\d+) v=(-?\d+),(-?\d+)")
 
-    def __init__(self, pos: Pair, vel: Pair) -> None:
+    def __init__(self, pos: tuple[int, int], vel: tuple[int, int]) -> None:
         self.pos = pos
         self.vel = vel
 
     @classmethod
-    def from_string(cls, info: str):
+    def from_string(cls: Type[R], info: str) -> R:
         m = cls.INFO.match(info)
-        return Robot(
+        assert m is not None
+        return cls(
             (int(m.group(1)), int(m.group(2))), (int(m.group(3)), int(m.group(4)))
         )
 
@@ -29,21 +31,12 @@ class Robot:
         self.pos = x, y
 
 
-def autocorrelation(matrix: Matrix[int]) -> int:
+def autocorrelation(matrix: Matrix[bool]) -> int:
+    """Autocorrelation on x with a lag of 1"""
     auto = 0
     for (r, c), item in matrix:
         auto += item * matrix[r, c - 1]
     return auto
-
-
-def show(matrix: Matrix[int]) -> str:
-    for r in range(matrix.rows):
-        print(
-            "".join(
-                "O" if d else "."
-                for d in matrix.data[r * matrix.cols : (r + 1) * matrix.cols]
-            )
-        )
 
 
 def solve(problem: list[str]) -> int:
@@ -51,19 +44,10 @@ def solve(problem: list[str]) -> int:
     for line in problem:
         robots.append(Robot.from_string(line))
 
-    for rob in robots:
-        rob.move(7383)
-    image = Matrix([[False] * 101 for _ in range(103)], False)
-    for rob in robots:
-        image[rob.pos] = True
-
-    print(show(image))
-
-    exit()
-
     step = 0
     max_correlation = 0
-    while step < 7390:
+    max_correlation_step = 0
+    while step < 10000:
         step += 1
         for rob in robots:
             rob.move()
@@ -72,31 +56,14 @@ def solve(problem: list[str]) -> int:
         for rob in robots:
             image[rob.pos] = True
 
+        # Save step when correlation is high
         corr = autocorrelation(image)
         if corr > max_correlation:
             max_correlation = corr
-            print(show(image))
-        print(f"Step = {step} ->", corr)
+            max_correlation_step = step
 
-    return 0
+    return max_correlation_step
 
 
 if __name__ == "__main__":
-    from aoc.utils import read_from_string
-
-    example = """
-p=0,4 v=3,-3
-p=6,3 v=-1,-3
-p=10,3 v=-1,2
-p=2,0 v=2,-1
-p=0,0 v=1,3
-p=3,0 v=-2,-2
-p=7,6 v=-1,-3
-p=3,0 v=-1,-2
-p=9,3 v=2,3
-p=7,3 v=-1,2
-p=2,4 v=2,-3
-p=9,5 v=-3,-3
-"""
-    problem = read_from_string(example)
-    print(f"Example solution {solve(problem, (11,7))}")
+    pass

@@ -2,7 +2,7 @@
 
 from collections.abc import Iterator
 from itertools import chain
-from typing import Generic, TypeVar
+from typing import Callable, Generic, TypeVar
 
 T = TypeVar("T")
 
@@ -34,6 +34,11 @@ class Matrix(Generic[T]):
     @property
     def shape(self) -> tuple[int, int]:
         return self.rows, self.cols
+
+
+def show(matrix: Matrix[T], line_func: Callable) -> None:
+    for r in range(matrix.rows):
+        print(line_func(matrix.data[r * matrix.cols : (r + 1) * matrix.cols]))
 
 
 class LabelTree:

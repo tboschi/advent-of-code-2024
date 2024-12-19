@@ -1,123 +1,83 @@
 """ Day 16 - part 1 """
 
-from aoc.structures import Matrix
-from dataclasses import dataclass
-
-# import heapq
+import heapq
 from collections import deque
+from dataclasses import dataclass, field
 
+from aoc.structures import Matrix
 
 Point = tuple[int, int]
-
-
-@dataclass
-class NodeInfo:
-    way: Point
-    steps: int = 0
-    turns: int = 0
-
-    @property
-    def cost(self) -> int:
-        return self.steps + 1000 * self.turns
+Node = tuple[Point, Point]
 
 
 def add(p1: Point, p2: Point) -> Point:
     return p1[0] + p2[0], p1[1] + p2[1]
 
 
-def find_neighbors_ffwd(
-    maze: Matrix[bool], pos: Point, info: NodeInfo, end: Point
-) -> list[tuple[Point, NodeInfo]]:
-    advance = True
-    while advance:
-        ffwd = info.way
-        left = -info.way[1], -info.way[0]
-        right = info.way[1], info.way[0]
-        print("Advance", pos, ffwd, left, right)
+class Node:
+    def __init__(self, pos, way):
+        self.pos = pos
+        self.way = way
 
-        dirs = (ffwd, left, right)
+    def __lt__(self, other):
+        return self.data < other.data
 
-        ns: list[tuple[Point, NodeInfo]] = []
-        for new_way in dirs:
-            new_pos = add(pos, new_way)
-            if not maze[new_pos]:
-                continue
-            if new_pos == end:
-                advance = False
+    def __hash__(self):
+        return hash(self.data)
 
-            is_turn = info.way != new_way
-            new_info = NodeInfo(new_way, info, info.steps + 1, info.turns + int(is_turn))
-            ns.append((new_pos, new_info))
+    def __eq__(self, other):
+        return self.data == other.data
 
-        if len(ns) != 1:
-            advance = False
-        else:
-            pos, info = ns[0]
+    def __repr__(self) -> str:
+        return str(self.data)
 
-    print("Stop at", pos)
-    return ns
+    @property
+    def data(self):
+        return self.pos, self.way
 
 
-def find_neighbors_ffwd(
-    maze: Matrix[bool], pos: Point, info: NodeInfo, end: Point
-) -> list[tuple[Point, NodeInfo]]:
-
-    ffwd = info.way
-    left = -info.way[1], -info.way[0]
-    right = info.way[1], info.way[0]
-    print("Advance", pos)
+def find_neighbors(maze: Matrix[bool], node: Node) -> list[Node]:
+    ffwd = node.way
+    left = -ffwd[1], -ffwd[0]
+    right = ffwd[1],  ffwd[0]
 
     dirs = (ffwd, left, right)
 
-    ns: list[tuple[Point, NodeInfo]] = []
+    ns: list[Node] = []
     for new_way in dirs:
-        new_pos = add(pos, new_way)
+        new_pos = add(node.pos, new_way)
         if not maze[new_pos]:
             continue
-
-        is_turn = info.way != new_way
-        new_info = NodeInfo(new_way, info.steps + 1, info.turns + int(is_turn))
-        ns.append((new_pos, new_info))
+        new_node = Node(new_pos, new_way)
+        ns.append(new_node)
 
     return ns
 
 
 def solve_maze(maze: Matrix[bool], start: Point, end: Point) -> int:
-    nodes: dict[Point, NodeInfo] = {start: NodeInfo((0, 1))}
-    queue = deque(find_neighbors_ffwd(maze, start, nodes[start], end))
+    start_node = Node(start, (0, 1))
+    costs: dict[Node, int] = {start_node: 0}
+    queue: list[tuple[int, Node]] = [(0, start_node)]
+    visited: set[Node] = set()
 
     while queue:
-        pos, info = queue.pop()
-        print("Check", pos, info)
+        cost, node = heapq.heappop(queue)
 
-        if pos == end:
-            print("Found end", info.cost, (info.steps, info.turns))
+        if node.pos == end:
+            break
 
-        # Update cost if node was already visted
-        if pos in nodes:
-            print("Already visited", pos)
-            if nodes[pos].cost > info.cost:
-                nodes[pos] = info
-            continue
-        else:
-            nodes[pos] = info
-
-        # Node is at the end
-        if pos == end:
+        if node in visited:
             continue
 
-        # Found end, node is more expensive and can be skipped
-        if end in nodes:
-            if info.cost > nodes[end].cost:
-                print("Skip", pos)
-                continue
+        visited.add(node)
 
-        # It's a new node
-        ns = find_neighbors_ffwd(maze, pos, info, end)
-        print("Adding", ns)
-        queue.extendleft(ns)
+        for new_node in find_neighbors(maze, node):
+            new_cost = cost + 1 + 1000 * (new_node.way != node.way)
+            if new_cost < costs.get(new_node, float("inf")):
+                costs[new_node] = new_cost
+                heapq.heappush(queue, (new_cost, new_node))
 
-    return nodes[end].cost
+    return cost 
 
 
 def solve(problem: list[str]) -> int:
@@ -127,8 +87,6 @@ def solve(problem: list[str]) -> int:
             start = r, c
         if (c := line.find("E")) >= 0:
             end = r, c
-
-    print(start, end)
 
     return solve_maze(maze, start, end)
 
@@ -153,6 +111,7 @@ if __name__ == "__main__":
 #S..#.....#...#
 ###############
 """
+
     example_alt = """
 #################
 #...#...#...#..E#
@@ -172,5 +131,6 @@ if __name__ == "__main__":
 #S#.............#
 #################
 """
+
     problem = read_from_string(example_alt)
     print(f"Example solution {solve(problem)}")
